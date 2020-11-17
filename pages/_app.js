@@ -1,4 +1,5 @@
 import Head from "next/head"
+import "./index.css"
 
 function App({Component, props}){
     return <>
