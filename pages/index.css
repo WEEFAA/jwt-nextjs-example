@@ -16,6 +16,7 @@ html, body, #__next {
     justify-content: center;
     align-items: center;
     background-color: #FBFBFB;
+    min-width: 360px;
 }
 
 
