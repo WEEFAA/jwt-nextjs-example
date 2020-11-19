@@ -1,4 +1,5 @@
 import { createConnection } from "../../../lib/db"
+import { runJWTMiddleware } from "../../../lib/jwt"
 
 const login = async (req,res) => {
     const { method } = req 
@@ -11,13 +12,15 @@ const login = async (req,res) => {
             // handle login 
             const result = await User.login(credentials)
             conn.close()
-            // console.log(result)
-            return res.json({
-                ok: result.err ? false : true,
-                message: result.err,
-                user: !!result.user,
-                pass: !!result.pass
+            // create jwt if user is valid
+            if(!result.err){
+                return await runJWTMiddleware(req,res,credentials)
+            }
+            // redirect to login with errors
+            res.writeHead(302, {
+                "Location": `/?message=${result.err || ""}&errors=${result.failing.join(',')}`
             })
+            return res.end()
         }
         default: 
             return res.status(503).end()
