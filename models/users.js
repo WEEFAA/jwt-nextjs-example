@@ -17,22 +17,23 @@ userSchema.static('login', async function({ username, password }){
     try{
         const user = await this.findOne({ username })
         if(!user){
-            return { err: "Invalid username or password", user: true }
+            return { err: "Invalid username or password", failing: ['user'] }
         }
         // if user is found,
         // check if the password is not correct
         const valid = await user.hasCorrectPassword(password)
         if(!valid){
-            return { err: "Incorrect password", pass: true }
+            return { err: "Incorrect password", failing: ['pass'] }
         }
         // otherwise, 
         return { 
-            err: null
+            err: null, failing: []
         }
     }catch(e){
         console.error(e)
         return {
-            err: e.message
+            err: e.message,
+            failing: []
         }
     }
 })
