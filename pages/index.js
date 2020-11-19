@@ -15,6 +15,12 @@ function Home(){
     const [errors, setErrors] = useState([])
     const [message, setMessage] = useState("")
 
+    // submit btn ref
+    const submitBtnRef = createRef()
+    function onSubmit(){
+        const btn = submitBtnRef.current
+        if(btn) btn.click()
+    }
     // form control
     function onChange(e){
         const { target } = e 
@@ -59,8 +65,8 @@ function Home(){
                         value={fields.password} onChange={onChange} required/>
                 </FormControl>
                 <Buttons>
-                    <Input type="submit" value="submit"/>
-                    <Button color="primary" variant="contained" >Login</Button>
+                    <Input inputRef={submitBtnRef} style={{display: 'none'}} type="submit" value="submit"/>
+                    <Button color="primary" variant="contained" onClick={onSubmit}>Login</Button>
                     <Button variant="contained">Info</Button>
                 </Buttons>
             </Form>
