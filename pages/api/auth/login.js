@@ -18,7 +18,7 @@ const login = async (req,res) => {
             }
             // redirect to login with errors
             res.writeHead(302, {
-                "Location": `/?message=${result.err || ""}&errors=${result.failing.join(',')}`
+                "Location": `/login?message=${result.err || ""}&errors=${result.failing.join(',')}`
             })
             return res.end()
         }
