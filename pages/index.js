@@ -16,7 +16,7 @@ const api = () => {
                 <Typography variant="h4" align="center" color="primary" component="h1">Not Authorize</Typography>
                 <Typography component="p" variant="subtitle1" align="center">please log in first</Typography>
                 <div style={{width: "50%", margin: "0 auto", display: "flex", justifyContent: "center" }}>
-                    <Link color="primary" align="center" href="/">Log in</Link>
+                    <Link color="primary" align="center" href="/login">Log in</Link>
                 </div>
                 
             </Elevated>
