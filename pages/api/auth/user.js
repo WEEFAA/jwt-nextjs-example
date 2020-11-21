@@ -4,7 +4,7 @@ const getUser = async (req,res) => {
     const { method } = req 
     switch(method){
         case "GET": {
-            await verifyJWT(req,res)
+            return await verifyJWT(req, res)
         }
         default:
             return res.status(503).end()
