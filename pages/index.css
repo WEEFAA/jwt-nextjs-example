@@ -35,3 +35,16 @@ html, body, #__next {
     margin: 10px;
 }
 
+
+.magic-meme {
+    width: 365px;
+    height: 155px;
+    object-fit: cover;
+    margin: 0 auto 15px;
+    display: block;
+}
+
+input[type="submit"]:hover {
+    cursor: pointer;
+    opacity: .8;
+}
