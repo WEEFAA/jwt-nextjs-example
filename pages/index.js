@@ -3,6 +3,7 @@ import { Elevated, Form } from '../components/layout'
 import { Page } from "../components/page"
 import { useUser } from "../lib/auth"
 import { generateCsrf } from '../lib/csrf'
+import Head from 'next/head'
 
 const api = ({ _csrf }) => {
     // next router
@@ -11,9 +12,12 @@ const api = ({ _csrf }) => {
     if(isValidating) return <CircularProgress />
 
     // redirect to login if any errors occured
-    if(error){
-        return (
+    if (error || !data) {
+		return (
 			<Page>
+				<Head>
+					<title>Not allowed 👈🏻 JWT-NextJS</title>
+				</Head>
 				<Elevated>
 					<Typography
 						variant="h4"
@@ -35,23 +39,26 @@ const api = ({ _csrf }) => {
 						alt="A guy suprised, laughing with himself!"
 						src="https://media.tenor.com/images/9d0da6776cd6c7a0551ab44dba355308/tenor.gif"
 					/>
-                    <Box 
-                        display="flex"
-                        justifyContent="center">
-                        <Link color="primary" align="center" href="/login" variant="subtitle1">
-                            Log in
-                        </Link>
+					<Box display="flex" justifyContent="center">
+						<Link
+							color="primary"
+							align="center"
+							href="/login"
+							variant="subtitle1">
+							Log in
+						</Link>
 					</Box>
 				</Elevated>
 			</Page>
 		)
-    }
-    const {
-        user = ""
-    } = data || {}
+	}
+	const { user = '' } = data
     // show authenticated user
     return (
 		<Page>
+			<Head>
+				<title> Authorized 👌🏻 JWT-NextJS</title>
+			</Head>
 			<Elevated>
 				<Typography
 					variant="h3"

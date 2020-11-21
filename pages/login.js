@@ -5,6 +5,7 @@ import { useState, createRef, useEffect } from "react"
 import { useRouter } from "next/router"
 import Token from "csrf"
 import { generateCsrf } from "../lib/csrf"
+import Head from 'next/head'
 
 function Home(props) {
     const router = useRouter()
@@ -43,6 +44,9 @@ function Home(props) {
 
 	return (
 		<Page>
+			<Head>
+				<title>Authorize 👁 JWT-NextJS</title>
+			</Head>
 			<Elevated>
 				<Typography
 					variant="h3"
@@ -96,7 +100,11 @@ function Home(props) {
 							required
 						/>
 					</FormControl>
-                    <Input type="hidden" name="_csrfToken" value={props._csrf} />
+					<Input
+						type="hidden"
+						name="_csrfToken"
+						value={props._csrf}
+					/>
 					<Buttons>
 						<Input
 							inputRef={submitBtnRef}
