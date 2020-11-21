@@ -1,3 +1,4 @@
+import { validCSRF } from '../../../lib/csrf'
 import { createConnection } from "../../../lib/db"
 import { runJWTMiddleware } from "../../../lib/jwt"
 
@@ -10,6 +11,9 @@ const login = async (req,res) => {
             const User = conn.models['User']
             const { body: credentials } = req 
             // handle login 
+            if (!validCSRF(req, res)) {
+				return res.status(400).end('CSRF Attack')
+			} 
             const result = await User.login(credentials)
             conn.close()
             // create jwt if user is valid

@@ -3,75 +3,129 @@ import { Typography, OutlinedInput, FormControl, InputLabel, Button, Container, 
 import { Buttons, Elevated, Form } from "../components/layout"
 import { useState, createRef, useEffect } from "react"
 import { useRouter } from "next/router"
-import { authLogin } from "../lib/auth"
+import Token from "csrf"
+import { generateCsrf } from "../lib/csrf"
 
-function Home(){
+function Home(props) {
     const router = useRouter()
-    // states
-    const [fields, toggleFields] = useState({
-        username: "",
-        password: ""
-    })
-    const [errors, setErrors] = useState([])
-    const [message, setMessage] = useState("")
+	// states
+	const [fields, toggleFields] = useState({
+		username: '',
+		password: '',
+	})
+	const [errors, setErrors] = useState([])
+	const [message, setMessage] = useState('')
 
-    // submit btn ref
-    const submitBtnRef = createRef()
-    function onSubmit(){
-        const btn = submitBtnRef.current
-        if(btn) btn.click()
+	// submit btn ref
+	const submitBtnRef = createRef()
+	function onSubmit() {
+		const btn = submitBtnRef.current
+		if (btn) btn.click()
+	}
+	// form control
+	function onChange(e) {
+		const { target } = e
+		toggleFields({
+			...fields,
+			[target.name]: target.value,
+		})
+	}
+
+	useEffect(() => {
+        const query = router.query
+		// check errors
+		const { errors = '', message = '' } = query
+		const failing = errors.split(',')
+		// set errors if exist
+		setErrors(failing)
+		setMessage(message)
+	}, [router.query])
+
+	return (
+		<Page>
+			<Elevated>
+				<Typography
+					variant="h3"
+					component="h1"
+					color="primary"
+					style={{ textAlign: 'center' }}>
+					Login
+				</Typography>
+				<Typography
+					variant="h6"
+					component="h2"
+					color="textSecondary"
+					style={{ textAlign: 'center' }}>
+					JWT authorization DEMO
+				</Typography>
+				<Form method="POST" action="/api/auth/login">
+					<Error message={message} />
+					<FormControl
+						variant="outlined"
+						fullWidth
+						margin="normal"
+						size="small"
+						required>
+						<InputLabel htmlFor="username">Username</InputLabel>
+						<OutlinedInput
+							id="username"
+							name="username"
+							placeholder="emela"
+							label="username"
+							error={errors.includes('user')}
+							value={fields.username}
+							onChange={onChange}
+							required
+						/>
+					</FormControl>
+					<FormControl
+						variant="outlined"
+						fullWidth
+						size="small"
+						required>
+						<InputLabel htmlFor="password">Password</InputLabel>
+						<OutlinedInput
+							id="password"
+							name="password"
+							type="password"
+							placeholder="************"
+							label="password"
+							error={errors.includes('pass')}
+							value={fields.password}
+							onChange={onChange}
+							required
+						/>
+					</FormControl>
+                    <Input type="hidden" name="_csrfToken" value={props._csrf} />
+					<Buttons>
+						<Input
+							inputRef={submitBtnRef}
+							style={{ display: 'none' }}
+							type="submit"
+							value="submit"
+						/>
+						<Button
+							color="primary"
+							variant="contained"
+							onClick={onSubmit}>
+							Login
+						</Button>
+						<Button variant="contained">Info</Button>
+					</Buttons>
+				</Form>
+			</Elevated>
+		</Page>
+	)
+}
+
+// SSR
+export const getServerSideProps = async function(context){
+    const { res } = context 
+    // generate token
+    const _csrf = await generateCsrf(res)
+    return {
+        props: { _csrf }
     }
-    // form control
-    function onChange(e){
-        const { target } = e 
-        toggleFields({
-            ...fields,
-            [target.name]: target.value
-        })
-    }
-
-    useEffect(() => {
-        const query = router.query 
-        // check errors 
-        const { errors = "", message = "" } = query
-        const failing = errors.split(',') 
-        // set errors if exist
-        setErrors(failing)
-        setMessage(message)
-    },[router.query])
-
-    return <Page>
-        <Elevated>
-            <Typography variant="h3" component="h1" color="primary" style={{textAlign: 'center'}}>
-                Login
-            </Typography>
-            <Typography variant="h6" component="h2" color="textSecondary" style={{textAlign: 'center'}}>
-                JWT authorization DEMO
-            </Typography>
-            <Form method="POST" action="/api/auth/login" >
-                <Error message={message}/>
-                <FormControl variant="outlined" fullWidth margin="normal" size="small" required>
-                    <InputLabel htmlFor="username">Username</InputLabel>
-                    <OutlinedInput 
-                        id="username" name="username" 
-                        placeholder="emela" label="username" error={errors.includes('user')}
-                        value={fields.username} onChange={onChange} required/>
-                </FormControl>
-                <FormControl variant="outlined" fullWidth size="small" required>
-                    <InputLabel htmlFor="password">Password</InputLabel>
-                    <OutlinedInput 
-                        id="password" name="password" type="password"
-                        placeholder="************" label="password" error={errors.includes('pass')}
-                        value={fields.password} onChange={onChange} required/>
-                </FormControl>
-                <Buttons>
-                    <Input inputRef={submitBtnRef} style={{display: 'none'}} type="submit" value="submit"/>
-                    <Button color="primary" variant="contained" onClick={onSubmit}>Login</Button>
-                    <Button variant="contained">Info</Button>
-                </Buttons>
-            </Form>
-        </Elevated>
-    </Page>
 }
 
 export default Home
