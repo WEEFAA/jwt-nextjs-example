@@ -10,15 +10,16 @@ to implement cross platform authorization.
 
 TL;DR 
 
-JWT Tokens aren't meant to be used as session tokens. It is commonly used 
-for API authorizaiton and quite useful in cross platform authorization, not authentication.
+JWT Tokens aren't meant to be used for authentication [although it's possible]. It is commonly used 
+for cross authorization across your different APIs [see **End Goal**], not authentication.
 
 > no registration [passwords are not hashed]
 
 
-# Dummy Data
+# Dummy Data: https://jwt-nextjs-example.vercel.app
 
 username | password
+--- | --- | ----
 admin | sweetdope
 user | webdev
 
