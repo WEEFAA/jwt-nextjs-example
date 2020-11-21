@@ -27,10 +27,10 @@ user | webdev
 
 > To implement authorization across multiple platforms (i.e. web applications).
 
-Login portal: login.example.com
+* Login portal: login.example.com
 
-Main site: example.com 
-Dashboard: dashboar.example.com
+* Main site: example.com 
+* Dashboard: dashboarh.example.com
 
 # Critics & Folks
 
