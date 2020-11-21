@@ -1,14 +1,26 @@
 import { Error, Page } from "../components/page"
-import { Typography, OutlinedInput, FormControl, InputLabel, Button, Container, Input, formatMs } from "@material-ui/core"
+import {
+	Typography,
+	OutlinedInput,
+	FormControl,
+	InputLabel,
+	Button,
+	Container,
+	Input,
+	formatMs,
+	CircularProgress,
+} from '@material-ui/core'
 import { Buttons, Elevated, Form } from "../components/layout"
 import { useState, createRef, useEffect } from "react"
 import { useRouter } from "next/router"
 import Token from "csrf"
 import { generateCsrf } from "../lib/csrf"
 import Head from 'next/head'
+import { useUser } from '../lib/auth'
 
 function Home(props) {
-    const router = useRouter()
+	const { isValidating, data, error } = useUser()
+	const router = useRouter()
 	// states
 	const [fields, toggleFields] = useState({
 		username: '',
@@ -33,7 +45,7 @@ function Home(props) {
 	}
 
 	useEffect(() => {
-        const query = router.query
+		const query = router.query
 		// check errors
 		const { errors = '', message = '' } = query
 		const failing = errors.split(',')
@@ -41,6 +53,16 @@ function Home(props) {
 		setErrors(failing)
 		setMessage(message)
 	}, [router.query])
+
+	// loading
+	if (isValidating || !data) {
+		return <CircularProgress />
+	}
+	// user is already logged in
+	if (data.user) {
+		router.push('/')
+		return null
+	}
 
 	return (
 		<Page>

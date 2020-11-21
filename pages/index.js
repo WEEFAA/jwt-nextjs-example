@@ -6,13 +6,13 @@ import { generateCsrf } from '../lib/csrf'
 import Head from 'next/head'
 
 const api = ({ _csrf }) => {
-    // next router
-    const { error, data, isValidating } = useUser()
-    // check errors
-    if(isValidating) return <CircularProgress />
+	// next router
+	const { error, data, isValidating } = useUser()
+	// check errors
+	if (isValidating || !data) return <CircularProgress />
 
-    // redirect to login if any errors occured
-    if (error || !data) {
+	// redirect to login if not authorized
+	if (data && !data.user) {
 		return (
 			<Page>
 				<Head>
@@ -53,8 +53,8 @@ const api = ({ _csrf }) => {
 		)
 	}
 	const { user = '' } = data
-    // show authenticated user
-    return (
+	// show authenticated user
+	return (
 		<Page>
 			<Head>
 				<title> Authorized 👌🏻 JWT-NextJS</title>
