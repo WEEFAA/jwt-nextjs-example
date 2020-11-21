@@ -12,16 +12,39 @@ const api = ({ _csrf }) => {
 
     // redirect to login if any errors occured
     if(error){
-        return <Page>
-            <Elevated>
-                <Typography variant="h4" align="center" color="primary" component="h1">Not Authorize</Typography>
-                <Typography component="p" variant="subtitle1" align="center">please log in first</Typography>
-                <div style={{width: "50%", margin: "0 auto", display: "flex", justifyContent: "center" }}>
-                    <Link color="primary" align="center" href="/login">Log in</Link>
-                </div>
-                
-            </Elevated>
-        </Page>
+        return (
+			<Page>
+				<Elevated>
+					<Typography
+						variant="h4"
+						align="center"
+						color="primary"
+						component="h1">
+						Not Authorize
+					</Typography>
+					<Typography
+						component="p"
+						variant="subtitle1"
+						align="center">
+						please log in first
+					</Typography>
+					<img
+						className="r-banner"
+						width={365}
+						height={250}
+						alt="A guy suprised, laughing with himself!"
+						src="https://media.tenor.com/images/9d0da6776cd6c7a0551ab44dba355308/tenor.gif"
+					/>
+                    <Box 
+                        display="flex"
+                        justifyContent="center">
+                        <Link color="primary" align="center" href="/login" variant="subtitle1">
+                            Log in
+                        </Link>
+					</Box>
+				</Elevated>
+			</Page>
+		)
     }
     const {
         user = ""
@@ -30,22 +53,37 @@ const api = ({ _csrf }) => {
     return (
 		<Page>
 			<Elevated>
-				<Typography variant="h3" component="h1" color="primary" align="center">
+				<Typography
+					variant="h3"
+					component="h1"
+					color="primary"
+					align="center">
 					Welcome {user}
 				</Typography>
 				<Typography
-                    align="center"
+					align="center"
 					variant="subtitle1"
 					component="p"
 					color="textSecondary"
 					paragraph>
 					you are now authorized, congratulations!
 				</Typography>
-                <img className="magic-meme" width={365} height={250} alt="A guy saying magic!" src="https://media1.tenor.com/images/d820481ef14b1cd2a16ff4e7660deb5f/tenor.gif?itemid=9239559"/>
+				<img
+					className="r-banner"
+					width={365}
+					height={250}
+					alt="A guy saying magic!"
+					src="https://media1.tenor.com/images/d820481ef14b1cd2a16ff4e7660deb5f/tenor.gif?itemid=9239559"
+				/>
 				<Form method="POST" action="/api/auth/logout">
-                    <Box display="flex" justifyContent="center">
-                        <Input type="submit" value="Logout" name="logout" disableUnderline/>
-                    </Box>
+					<Box display="flex" justifyContent="center">
+						<Input
+							type="submit"
+							value="Logout"
+							name="logout"
+							disableUnderline
+						/>
+					</Box>
 					<Input type="hidden" name="_csrfToken" value={_csrf} />
 				</Form>
 			</Elevated>
