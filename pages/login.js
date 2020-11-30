@@ -12,8 +12,7 @@ import {
 } from '@material-ui/core'
 import { Buttons, Elevated, Form } from "../components/layout"
 import { useState, createRef, useEffect } from "react"
-import { useRouter } from "next/router"
-import Token from "csrf"
+import { useRouter } from 'next/router'
 import { generateCsrf } from "../lib/csrf"
 import Head from 'next/head'
 import { useUser } from '../lib/auth'
@@ -28,6 +27,7 @@ function Home(props) {
 	})
 	const [errors, setErrors] = useState([])
 	const [message, setMessage] = useState('')
+	const [app_callback_uri, setAppCallback] = useState('/')
 
 	// submit btn ref
 	const submitBtnRef = createRef()
@@ -47,11 +47,12 @@ function Home(props) {
 	useEffect(() => {
 		const query = router.query
 		// check errors
-		const { errors = '', message = '' } = query
+		const { errors = '', message = '', app_callback = '/' } = query
 		const failing = errors.split(',')
 		// set errors if exist
 		setErrors(failing)
 		setMessage(message)
+		setAppCallback(app_callback)
 	}, [router.query])
 
 	// loading
@@ -84,7 +85,9 @@ function Home(props) {
 					style={{ textAlign: 'center' }}>
 					JWT authorization DEMO
 				</Typography>
-				<Form method="POST" action="/api/auth/login">
+				<Form
+					method="POST"
+					action={`/api/auth/login?app_callback=${app_callback_uri}`}>
 					<Error message={message} />
 					<FormControl
 						variant="outlined"
