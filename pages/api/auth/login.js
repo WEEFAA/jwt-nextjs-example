@@ -9,7 +9,10 @@ const login = async (req,res) => {
             // established connection
             const conn = await createConnection()
             const User = conn.models['User']
-            const { body: credentials } = req 
+            const {
+				body: credentials,
+				query: { app_callback = '/' },
+			} = req 
             // handle login 
             if (!validCSRF(req, res)) {
 				return res.status(400).end('CSRF Attack')
@@ -21,9 +24,12 @@ const login = async (req,res) => {
                 return await runJWTMiddleware(req,res,credentials)
             }
             // redirect to login with errors
+            
             res.writeHead(302, {
-                "Location": `/login?message=${result.err || ""}&errors=${result.failing.join(',')}`
-            })
+				Location: `/login?app_callback=${encodeURI(app_callback)}&message=${
+					result.err || ''
+				}&errors=${result.failing.join(',')}`,
+			})
             return res.end()
         }
         default: 
