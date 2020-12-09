@@ -5,17 +5,13 @@ import {
 	FormControl,
 	InputLabel,
 	Button,
-	Container,
 	Input,
-	formatMs,
-	CircularProgress,
 } from '@material-ui/core'
 import { Buttons, Elevated, Form } from "../components/layout"
 import { useState, createRef, useEffect } from "react"
 import { useRouter } from 'next/router'
 import { generateCsrf } from "../lib/csrf"
 import Head from 'next/head'
-import { useUser } from '../lib/auth'
 import { verifyUser } from '../lib/jwt'
 
 function Home(props) {
