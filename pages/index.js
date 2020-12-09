@@ -7,9 +7,9 @@ import Head from 'next/head'
 
 const api = ({ _csrf }) => {
 	// next router
-	const { error, data, isValidating } = useUser()
+	const { error, data, isLoading } = useUser()
 	// check errors
-	if (isValidating || !data) return <CircularProgress />
+	if (isLoading) return <CircularProgress />
 
 	// redirect to login if not authorized
 	if (data && !data.user) {
