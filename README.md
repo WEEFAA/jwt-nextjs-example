@@ -30,7 +30,7 @@ user | webdev
 * Login portal: login.example.com
 
 * Main site: example.com 
-* Dashboard: dashboarh.example.com
+* Dashboard: dashboard.example.com
 
 # Critics & Folks
 
