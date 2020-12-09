@@ -16,9 +16,9 @@ import { useRouter } from 'next/router'
 import { generateCsrf } from "../lib/csrf"
 import Head from 'next/head'
 import { useUser } from '../lib/auth'
+import { verifyUser } from '../lib/jwt'
 
 function Home(props) {
-	const { isValidating, data, error } = useUser()
 	const router = useRouter()
 	// states
 	const [fields, toggleFields] = useState({
@@ -54,16 +54,6 @@ function Home(props) {
 		setMessage(message)
 		setAppCallback(app_callback)
 	}, [router.query])
-
-	// loading
-	if (isValidating || !data) {
-		return <CircularProgress />
-	}
-	// user is already logged in
-	if (data.user) {
-		router.push('/')
-		return null
-	}
 
 	return (
 		<Page>
@@ -153,12 +143,24 @@ function Home(props) {
 
 // SSR
 export const getServerSideProps = async function(context){
-    const { res } = context 
-    // generate token
-    const _csrf = await generateCsrf(res)
-    return {
-        props: { _csrf }
-    }
+	const {
+		res,
+		req,
+		query: { app_callback = '/' },
+	} = context
+
+	const loggedIn = await verifyUser(req)
+	if (loggedIn) {
+		// redirect
+		res.writeHead(307, { Location: app_callback })
+		res.end()
+		return { props: {} }
+	}
+	// generate token
+	const _csrf = await generateCsrf(res)
+	return {
+		props: { _csrf },
+	}
 }
 
 export default Home
