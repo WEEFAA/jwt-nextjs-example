@@ -12,7 +12,7 @@ import { useState, createRef, useEffect } from "react"
 import { useRouter } from 'next/router'
 import { generateCsrf } from "../lib/csrf"
 import Head from 'next/head'
-import { verifyUser } from '../lib/jwt'
+import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
 
 function Home(props) {
 	const router = useRouter()
@@ -145,10 +145,21 @@ export const getServerSideProps = async function(context){
 		query: { app_callback = '/' },
 	} = context
 
+	const allowed_uris = process.env.APP_CALLBACK_URIS || []
 	const loggedIn = await verifyUser(req)
 	if (loggedIn) {
-		// redirect
-		res.writeHead(307, { Location: app_callback })
+		const token = req.cookies[cookieName]
+		// if legitimate uri, send the token
+		const should_redirect_with_token = isLegitimateCallbackUri(
+			allowed_uris,
+			app_callback
+		)
+		const go_to_uri = should_redirect_with_token
+			? `${app_callback}?sid=${token}`
+			: app_callback
+
+		// redirect with the token, or not.
+		res.writeHead(307, { Location: go_to_uri })
 		res.end()
 		return { props: {} }
 	}
