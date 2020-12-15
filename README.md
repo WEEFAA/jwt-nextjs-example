@@ -16,12 +16,11 @@ for cross authorization across your applications [see __End Goal__], not authent
 > no registration [passwords are not hashed]
 
 
-# Dummy Data: https://jwt-nextjs-example.vercel.app
+# TODO
 
-username | password 
---- | --- 
-admin | sweetdope
-user | webdev
+❎ Register (on strapi backend)
+❎ Disallow redirects [moderate]
+❎ Redo controllers?
 
 # End Goal
 
