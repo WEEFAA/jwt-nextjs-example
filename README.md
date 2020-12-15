@@ -13,15 +13,12 @@ TL;DR
 JWT Tokens aren't meant to be used for authentication [although it's possible]. It is commonly used 
 for cross authorization across your applications [see __End Goal__], not authentication.
 
-> no registration [passwords are not hashed]
 
+# TODO
 
-# Dummy Data: https://jwt-nextjs-example.vercel.app
-
-username | password 
---- | --- 
-admin | sweetdope
-user | webdev
+❎ Register (on strapi backend)
+❎ Disallow redirects [moderate]
+❎ Redo controllers?
 
 # End Goal
 
