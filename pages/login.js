@@ -124,6 +124,13 @@ function Home(props) {
 						name="_csrfToken"
 						value={props._csrf}
 					/>
+					<Button
+						href="/register"
+						variant="text"
+						color="primary"
+						style={{ margin: '5px auto 0' }}>
+						Doesn't have an account? Register now.
+					</Button>
 					<Buttons>
 						<Input
 							inputRef={submitBtnRef}
