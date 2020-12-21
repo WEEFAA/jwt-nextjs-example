@@ -78,6 +78,7 @@ function Home(props) {
 					JWT authorization DEMO
 				</Typography>
 				<Form
+					id="loginForm"
 					method="POST"
 					action={`/api/auth/login?app_callback=${app_callback_uri}`}>
 					<Error message={message} />
