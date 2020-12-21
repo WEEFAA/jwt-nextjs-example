@@ -16,6 +16,7 @@ import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
 
 function Home(props) {
 	const router = useRouter()
+	const inputRef = createRef(null)
 	// states
 	const [fields, toggleFields] = useState({
 		username: '',
@@ -50,6 +51,11 @@ function Home(props) {
 		setMessage(message)
 		setAppCallback(app_callback)
 	}, [router.query])
+
+	useEffect(() => {
+		const { current: identifier_field } = inputRef
+		identifier_field.focus()
+	}, []) 
 
 	return (
 		<Page>
@@ -87,6 +93,7 @@ function Home(props) {
 							name="username"
 							placeholder="emela"
 							label="username"
+							inputRef={inputRef}
 							error={errors.includes('user')}
 							value={fields.username}
 							onChange={onChange}
