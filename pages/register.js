@@ -1,6 +1,7 @@
 import React, { createRef, useEffect, useReducer, useState } from 'react'
 import { Page, Error } from '../components/page'
 import Head from 'next/head'
+import { useRouter } from "next/router"
 import { Elevated, Form } from '../components/layout'
 import { makeStyles } from '@material-ui/core/styles'
 import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
@@ -16,7 +17,38 @@ import {
 	ButtonGroup,
 	Backdrop,
 	CircularProgress,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogContentText,
+	DialogActions,
 } from '@material-ui/core'
+
+
+// registration dialog
+const OnSuccess_Dialog = function(props){
+	const { onClose, title } = props
+	return (
+		<Dialog
+			open={true}
+			onClose={onClose}
+			aria-labelledby="alert-dialog-title"
+			aria-describedby="alert-dialog-description">
+			<DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+			<DialogContent>
+				<DialogContentText id="alert-dialog-description">
+					Thank you for registering to this platform. Enjoy your stay,
+					login now!
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={onClose} color="primary" autoFocus>
+					Cool
+				</Button>
+			</DialogActions>
+		</Dialog>
+	)
+}
 
 const useStyles = makeStyles(theme => ({
 	backdrop: {
@@ -53,8 +85,10 @@ const field_reducer = function (state, action) {
 const Register_Page = function (props) {
 	const classes = useStyles()
 	const formRef = createRef()
+	const router = useRouter()
 
 	const [error, setError] = useState('')
+	const [open_dialog, setDialog] = useState(false)
 	const [fieldErrors, error_dispatch] = useReducer(
 		field_reducer,
 		initialFields,
@@ -126,7 +160,8 @@ const Register_Page = function (props) {
 			// all seems to go well 
 			// open success registration dialog
 			// state 
-			return toggleSubmit(false)
+			toggleSubmit(false)
+			return setDialog(true)
 		} catch (e) {
 			const { data, message, status } = handle_axios_error(e)
 			if (!status) {
@@ -144,15 +179,20 @@ const Register_Page = function (props) {
 		dispatch({ type: 'update', value: target.value, field: target.name })
 	}
 
+	const redirect = function(){
+		router.push("/login")
+	}
+
 	return (
 		<Page>
 			<Head>
 				<title>Register 👁 JWT-NextJS</title>
 			</Head>
-			<Error message={error}/>
+			<Error message={error} />
 			<Backdrop className={classes.backdrop} open={isSubmitting}>
 				<CircularProgress />
 			</Backdrop>
+			{open_dialog && <OnSuccess_Dialog title="Registration successful" onClose={redirect}/>}
 			<Elevated>
 				<Typography variant="h3" color="primary" align="center">
 					Register
@@ -177,7 +217,9 @@ const Register_Page = function (props) {
 							value={fields.username}
 							onChange={onChange}
 						/>
-						<FormHelperText error={!!fieldErrors.username}>{fieldErrors.username}</FormHelperText>
+						<FormHelperText error={!!fieldErrors.username}>
+							{fieldErrors.username}
+						</FormHelperText>
 					</FormControl>
 					<FormControl fullWidth margin="dense">
 						<TextField
@@ -191,7 +233,9 @@ const Register_Page = function (props) {
 							value={fields.email}
 							onChange={onChange}
 						/>
-						<FormHelperText error={!!fieldErrors.email}>{fieldErrors.email}</FormHelperText>
+						<FormHelperText error={!!fieldErrors.email}>
+							{fieldErrors.email}
+						</FormHelperText>
 					</FormControl>
 					<FormControl fullWidth margin="dense">
 						<TextField
@@ -205,7 +249,9 @@ const Register_Page = function (props) {
 							value={fields.password}
 							onChange={onChange}
 						/>
-						<FormHelperText error={!!fieldErrors.password}>{fieldErrors.password}</FormHelperText>
+						<FormHelperText error={!!fieldErrors.password}>
+							{fieldErrors.password}
+						</FormHelperText>
 					</FormControl>
 					<FormControl fullWidth margin="dense">
 						<TextField
@@ -219,7 +265,9 @@ const Register_Page = function (props) {
 							value={fields.confirmPassword}
 							onChange={onChange}
 						/>
-						<FormHelperText error={!!fieldErrors.confirmPassword}>{fieldErrors.confirmPassword}</FormHelperText>
+						<FormHelperText error={!!fieldErrors.confirmPassword}>
+							{fieldErrors.confirmPassword}
+						</FormHelperText>
 					</FormControl>
 					<ButtonGroup
 						aria-label="Form buttons"
