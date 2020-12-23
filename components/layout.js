@@ -12,11 +12,13 @@ export const Elevated = ({ el, children}) => {
 export const Form = forwardRef((props,ref) => {
     const {  children, maxWidth = "xs", onSubmit = () => {}, ...rest } = props
     
-    return <form id="loginForm" onSubmit={onSubmit} ref={ref} {...rest}>
-        <Container maxWidth={maxWidth} fixed>
-            { children }
-        </Container>
-    </form>
+    return (
+		<form onSubmit={onSubmit} ref={ref} {...rest}>
+			<Container maxWidth={maxWidth} fixed>
+				{children}
+			</Container>
+		</form>
+	)
 })
 
 export const Buttons = ({ children }) => {

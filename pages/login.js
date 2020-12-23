@@ -16,6 +16,7 @@ import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
 
 function Home(props) {
 	const router = useRouter()
+	const inputRef = createRef(null)
 	// states
 	const [fields, toggleFields] = useState({
 		username: '',
@@ -51,6 +52,11 @@ function Home(props) {
 		setAppCallback(app_callback)
 	}, [router.query])
 
+	useEffect(() => {
+		const { current: identifier_field } = inputRef
+		identifier_field.focus()
+	}, []) 
+
 	return (
 		<Page>
 			<Head>
@@ -72,6 +78,7 @@ function Home(props) {
 					JWT authorization DEMO
 				</Typography>
 				<Form
+					id="loginForm"
 					method="POST"
 					action={`/api/auth/login?app_callback=${app_callback_uri}`}>
 					<Error message={message} />
@@ -87,6 +94,7 @@ function Home(props) {
 							name="username"
 							placeholder="emela"
 							label="username"
+							inputRef={inputRef}
 							error={errors.includes('user')}
 							value={fields.username}
 							onChange={onChange}
@@ -116,6 +124,13 @@ function Home(props) {
 						name="_csrfToken"
 						value={props._csrf}
 					/>
+					<Button
+						href="/register"
+						variant="text"
+						color="primary"
+						style={{ margin: '5px auto 0' }}>
+						Doesn't have an account? Register now.
+					</Button>
 					<Buttons>
 						<Input
 							inputRef={submitBtnRef}
