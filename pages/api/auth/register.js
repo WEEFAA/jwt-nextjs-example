@@ -8,6 +8,8 @@ const register_api = async function (req, res) {
 		case 'POST':
 			try {
 				const { body } = req
+				const host = process.env.BACKEND_URI || 'http://localhost:1337'
+				const register_url = `${host}/auth/local/register`
 				if (!validCSRF(req, res)) {
 					return res.status(400).json({
 						message: 'CSRF Attack Detected',
@@ -17,8 +19,7 @@ const register_api = async function (req, res) {
 				} 
 				
 				return axios({
-					url:
-						'https://weefacorp-admin.herokuapp.com/auth/local/register',
+					url: register_url,
 					method: 'POST',
 					data: JSON.stringify(body),
 					headers: {
