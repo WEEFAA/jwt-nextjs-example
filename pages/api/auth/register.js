@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { handle_axios_error } from '../../../lib/http'
+import { validCSRF } from '../../../lib/csrf'
 
 const register_api = async function (req, res) {
 	const { method } = req
@@ -7,6 +8,14 @@ const register_api = async function (req, res) {
 		case 'POST':
 			try {
 				const { body } = req
+				if (!validCSRF(req, res)) {
+					return res.status(400).json({
+						message: 'CSRF Attack Detected',
+						data: {},
+						status: 4000,
+					})
+				} 
+				
 				return axios({
 					url:
 						'https://weefacorp-admin.herokuapp.com/auth/local/register',

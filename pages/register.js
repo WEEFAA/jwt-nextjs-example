@@ -146,7 +146,7 @@ const Register_Page = function (props) {
 			// define the request body
 			const body = {
 				...fields,
-				_csrf: props._csrf,
+				_csrfToken: props._csrf,
 			}
 			// register
 			const response = await axios({
