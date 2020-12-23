@@ -1,8 +1,14 @@
-import React, { createRef, useReducer, useState } from 'react'
-import { Page } from '../components/page'
+import React, { createRef, useEffect, useReducer, useState } from 'react'
+import { Page, Error } from '../components/page'
 import Head from 'next/head'
 import { Elevated, Form } from '../components/layout'
+import { makeStyles } from '@material-ui/core/styles'
+import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
+import { generateCsrf } from '../lib/csrf'
+import axios from 'axios'
+import { handle_axios_error } from '../lib/http'
 import {
+	FormHelperText,
 	Button,
 	FormControl,
 	TextField,
@@ -11,11 +17,6 @@ import {
 	Backdrop,
 	CircularProgress,
 } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
-import { generateCsrf } from '../lib/csrf'
-import axios from 'axios'
-import { handle_axios_error } from '../lib/http'
 
 const useStyles = makeStyles(theme => ({
 	backdrop: {
@@ -52,6 +53,13 @@ const field_reducer = function (state, action) {
 const Register_Page = function (props) {
 	const classes = useStyles()
 	const formRef = createRef()
+
+	const [error, setError] = useState('')
+	const [fieldErrors, error_dispatch] = useReducer(
+		field_reducer,
+		initialFields,
+		field_init
+	)
 	const [fields, dispatch] = useReducer(
 		field_reducer,
 		initialFields,
@@ -59,17 +67,54 @@ const Register_Page = function (props) {
 	)
 	const [isSubmitting, toggleSubmit] = useState(false)
 
+	// error update function
+	const toggleErrors = result => {
+		const { message, data: result_errors = [] } = result
+		const input_fields = Object.keys(initialFields)
+		// assign each error to its corresponding field
+		if (Array.isArray(result_errors)) {
+			for (let err of result_errors) {
+				const { messages } = err
+				for (let item of messages) {
+					const { id, message } = item
+					// determine if a field is failing
+					for (let iField of input_fields) {
+						const reg = new RegExp(iField, 'i')
+						// if so, set error
+						if (reg.test(id)) {
+							error_dispatch({
+								type: 'update',
+								field: iField,
+								value: message,
+							})
+						}
+					}
+				}
+			}
+		} else {
+			setError(message || 'Unknown Error')
+		}
+	}
+	
 	// handle submit
 	const onSubmit = async function (ev) {
 		try {
 			ev.preventDefault()
 			toggleSubmit(true)
+			// clear state
+			setError('')
+			error_dispatch({ type: 'reset' })
+			// simple check if confirmPassword is === to password
+			if(fields.password !== fields.confirmPassword){
+				error_dispatch({ type:'update', field: 'confirmPassword', value: "Confirm Password doesn't match password"})
+				return toggleSubmit(false)
+			}
 			// define the request body
 			const body = {
 				...fields,
 				_csrf: props._csrf,
 			}
-
+			// register
 			const response = await axios({
 				url: '/api/auth/register',
 				method: 'POST',
@@ -78,11 +123,18 @@ const Register_Page = function (props) {
 				},
 				data: JSON.stringify(body),
 			})
-
+			// all seems to go well 
+			// open success registration dialog
+			// state 
 			return toggleSubmit(false)
 		} catch (e) {
-			const result = handle_axios_error(e)
-
+			const { data, message, status } = handle_axios_error(e)
+			if (!status) {
+				setError(message)
+				error_dispatch({ type: 'reset' })
+			} else {
+				toggleErrors(data)
+			}
 			return toggleSubmit(false)
 		}
 	}
@@ -97,6 +149,7 @@ const Register_Page = function (props) {
 			<Head>
 				<title>Register 👁 JWT-NextJS</title>
 			</Head>
+			<Error message={error}/>
 			<Backdrop className={classes.backdrop} open={isSubmitting}>
 				<CircularProgress />
 			</Backdrop>
@@ -124,6 +177,7 @@ const Register_Page = function (props) {
 							value={fields.username}
 							onChange={onChange}
 						/>
+						<FormHelperText error={!!fieldErrors.username}>{fieldErrors.username}</FormHelperText>
 					</FormControl>
 					<FormControl fullWidth margin="dense">
 						<TextField
@@ -137,6 +191,7 @@ const Register_Page = function (props) {
 							value={fields.email}
 							onChange={onChange}
 						/>
+						<FormHelperText error={!!fieldErrors.email}>{fieldErrors.email}</FormHelperText>
 					</FormControl>
 					<FormControl fullWidth margin="dense">
 						<TextField
@@ -150,6 +205,7 @@ const Register_Page = function (props) {
 							value={fields.password}
 							onChange={onChange}
 						/>
+						<FormHelperText error={!!fieldErrors.password}>{fieldErrors.password}</FormHelperText>
 					</FormControl>
 					<FormControl fullWidth margin="dense">
 						<TextField
@@ -163,6 +219,7 @@ const Register_Page = function (props) {
 							value={fields.confirmPassword}
 							onChange={onChange}
 						/>
+						<FormHelperText error={!!fieldErrors.confirmPassword}>{fieldErrors.confirmPassword}</FormHelperText>
 					</FormControl>
 					<ButtonGroup
 						aria-label="Form buttons"
