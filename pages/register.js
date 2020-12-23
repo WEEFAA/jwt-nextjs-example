@@ -14,6 +14,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { verifyUser, isLegitimateCallbackUri, cookieName } from '../lib/jwt'
 import { generateCsrf } from '../lib/csrf'
+import axios from 'axios'
+import { handle_axios_error } from '../lib/http'
 
 const useStyles = makeStyles(theme => ({
 	backdrop: {
@@ -68,19 +70,20 @@ const Register_Page = function (props) {
 				_csrf: props._csrf,
 			}
 
-			const response = await fetch('/api/auth/register', {
+			const response = await axios({
+				url: '/api/auth/register',
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(body),
+				data: JSON.stringify(body),
 			})
 
 			return toggleSubmit(false)
 		} catch (e) {
-			if (formRef && formRef.current.checkValidity) {
-				formRef.current.reportValidity()
-			}
+			const result = handle_axios_error(e)
+
+			return toggleSubmit(false)
 		}
 	}
 
