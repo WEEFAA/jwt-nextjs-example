@@ -180,7 +180,7 @@ const Register_Page = function (props) {
 	}
 
 	const redirect = function(){
-		router.push("/login")
+		router.push(`/login?app_callback=${props.app_callback}`)
 	}
 
 	return (
@@ -328,7 +328,7 @@ export const getServerSideProps = async context => {
 	// generate token
 	const _csrf = await generateCsrf(res)
 	return {
-		props: { _csrf },
+		props: { _csrf, app_callback },
 	}
 }
 
