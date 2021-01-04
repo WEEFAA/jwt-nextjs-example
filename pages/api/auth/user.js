@@ -11,11 +11,11 @@ const getUser = async (req,res) => {
 
 			// decode the token
 			const token = req.cookies[cookieName]
-			const payload = jwt.decode(token)
+            const payload = jwt.decode(token) 
 
 			return res.json({
 				...payload,
-				user: payload.sub,
+				user: payload.id,
 			})
         }
         default:
