@@ -17,10 +17,7 @@ const login = async (req,res) => {
 			// authenticate to backend
 			const uri = process.env.BACKEND_URI || ''
 			const auth_uri = `${uri}/auth/local`
-			const auth_result = await auth(auth_uri, {
-				identifier: credentials.username,
-				password: credentials.password,
-            })
+			const auth_result = await auth(auth_uri, credentials)
             
 			// set jwt if user successfully log in
 			if (!auth_result.err) {
