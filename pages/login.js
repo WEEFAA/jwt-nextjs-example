@@ -19,7 +19,7 @@ function Home(props) {
 	const inputRef = createRef(null)
 	// states
 	const [fields, toggleFields] = useState({
-		username: '',
+		identifier: '',
 		password: '',
 	})
 	const [errors, setErrors] = useState([])
@@ -88,15 +88,15 @@ function Home(props) {
 						margin="normal"
 						size="small"
 						required>
-						<InputLabel htmlFor="username">Username</InputLabel>
+						<InputLabel htmlFor="identifier">Username</InputLabel>
 						<OutlinedInput
-							id="username"
-							name="username"
-							placeholder="emela"
-							label="username"
+							id="identifier"
+							name="identifier"
+							placeholder="emela or emela@gmail.com"
+							label="identifier"
 							inputRef={inputRef}
-							error={errors.includes('user')}
-							value={fields.username}
+							error={errors.includes('identifier')}
+							value={fields.identifier}
 							onChange={onChange}
 							required
 						/>
@@ -113,7 +113,7 @@ function Home(props) {
 							type="password"
 							placeholder="************"
 							label="password"
-							error={errors.includes('pass')}
+							error={errors.includes('password')}
 							value={fields.password}
 							onChange={onChange}
 							required
@@ -125,7 +125,7 @@ function Home(props) {
 						value={props._csrf}
 					/>
 					<Button
-						href="/register"
+						href={`/register?app_callback=${app_callback_uri}`}
 						variant="text"
 						color="primary"
 						style={{ margin: '5px auto 0' }}>
