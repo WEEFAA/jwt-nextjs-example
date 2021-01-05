@@ -125,7 +125,7 @@ function Home(props) {
 						value={props._csrf}
 					/>
 					<Button
-						href="/register"
+						href={`/register?app_callback=${app_callback_uri}`}
 						variant="text"
 						color="primary"
 						style={{ margin: '5px auto 0' }}>

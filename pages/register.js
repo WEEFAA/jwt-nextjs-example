@@ -192,7 +192,12 @@ const Register_Page = function (props) {
 			<Backdrop className={classes.backdrop} open={isSubmitting}>
 				<CircularProgress />
 			</Backdrop>
-			{open_dialog && <OnSuccess_Dialog title="Registration successful" onClose={redirect}/>}
+			{open_dialog && (
+				<OnSuccess_Dialog
+					title="Registration successful"
+					onClose={redirect}
+				/>
+			)}
 			<Elevated>
 				<Typography variant="h3" color="primary" align="center">
 					Register
@@ -288,7 +293,7 @@ const Register_Page = function (props) {
 						</Button>
 					</ButtonGroup>
 					<Button
-						href="/login"
+						href={`/login?app_callback=${props.app_callback}`}
 						variant="text"
 						color="primary"
 						style={{ marginBottom: 3 }}>
