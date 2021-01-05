@@ -1,7 +1,7 @@
 import { verifyUser } from '../../../lib/jwt'
 import { cookieName } from '../../../lib/jwt'
+import { getUserInfo } from "../../../lib/user"
 import jwt from 'jsonwebtoken'
-import axios from 'axios'
 
 const getUser = async (req,res) => {
     const { method } = req 
@@ -14,22 +14,19 @@ const getUser = async (req,res) => {
 			const token = req.cookies[cookieName]
             const payload = jwt.decode(token) 
             const backend_uri = process.env.BACKEND_URI || ""
-            const user_info_uri = `${backend_uri}/users/me`
-            const headers = {
-                Authorization: `Bearer ${token}`,
+            // fetch user info
+            const user_info = await getUserInfo(backend_uri, token)
+            
+            // reject request when there's no user info
+            if(!user_info){
+                res.status(401).end()
             }
-            // try to fetch user info
-            try {
-				const response = await axios.get(user_info_uri,{ headers })
-                const { data } = response 
-                return res.json({
-                    ...payload,
-                    user: data.username,
-                })
-			} catch (e) {
-                // failed to get user information
-				res.status(401).end()
-			}
+            // return user info
+            return res.json({
+                ...payload,
+                user: user_info.username,
+            })
+            
         }
         default:
             return res.status(503).end()
